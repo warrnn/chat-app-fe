@@ -11,7 +11,13 @@ const sendMessage = () => {
     message: message.value,
     handle: handle.value
   });
+
+  message.value = '';
 };
+
+const updateFeedback = () => {
+  socket.emit('typing', handle.value);
+}
 </script>
 
 <template>
@@ -19,7 +25,7 @@ const sendMessage = () => {
     <input type="text" id="Handle" v-model="handle"
       class="w-1/4 sm:w-1/5 bg-stone-700/50 text-white border border-stone-600 rounded-xl py-3 px-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-stone-400"
       placeholder="Handle?">
-    <input type="text" id="message" v-model="message" @keyup.enter="sendMessage"
+    <input type="text" id="message" v-model="message" @keyup.enter="sendMessage" @keypress="updateFeedback"
       class="flex-1 bg-stone-700/50 text-white border border-stone-600 rounded-xl py-3 px-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-stone-400"
       placeholder="Type a message...">
     <button id="send" @click="sendMessage"

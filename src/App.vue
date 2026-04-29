@@ -5,6 +5,8 @@ import BaseLayout from './components/base-layout.vue';
 import MessageField from './components/message-field.vue';
 
 const messages = ref([]);
+const feedback = ref(null);
+let typingTimeout = null;
 
 // Listen for event
 socket.on('chat', function (data) {
@@ -12,6 +14,18 @@ socket.on('chat', function (data) {
     handle: data.handle,
     message: data.message
   });
+});
+
+socket.on('typing', function (data) {
+  feedback.value = data;
+
+  if (typingTimeout) {
+    clearTimeout(typingTimeout);
+  }
+
+  typingTimeout = setTimeout(() => {
+    feedback.value = null;
+  }, 2000);
 });
 </script>
 
@@ -25,6 +39,7 @@ socket.on('chat', function (data) {
         <strong>{{ msg.handle }}:</strong> {{ msg.message }}
       </div>
     </section>
+    <div id="feedback" class="my-4 text-white">{{ feedback ? feedback + ' is typing...' : '' }}</div>
     <MessageField />
   </BaseLayout>
 </template>
